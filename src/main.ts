@@ -14,14 +14,19 @@ const button = document.createElement("button");
 button.innerHTML = buttonName;
 app.append(button);
 
-let counterVal:number = 0;
+let counterVal: number = 0;
 const counterDiv = document.createElement("div");
 counterDiv.innerHTML = "🪳 Busted: " + counterVal;
 button.addEventListener("click", () => {
-    counterDiv.innerHTML = "🪳Busted: " + ++counterVal;
+  counterDiv.innerHTML = "🪳Busted: " + ++counterVal;
 });
 app.append(counterDiv);
 
-setInterval(() => {
-  counterDiv.innerHTML = "🪳Busted: " + ++counterVal;
-}, 1000);
+let timestamp = performance.now();
+requestAnimationFrame(function step(t) {
+  counterVal += (t - timestamp) / 1000;
+  timestamp = t;
+  counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
+  requestAnimationFrame(step);
+});
+
