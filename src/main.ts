@@ -18,7 +18,10 @@ let counterVal:number = 0;
 const counterDiv = document.createElement("div");
 counterDiv.innerHTML = "🪳 Busted: " + counterVal;
 button.addEventListener("click", () => {
-    console.log(counterVal);
     counterDiv.innerHTML = "🪳Busted: " + ++counterVal;
 });
 app.append(counterDiv);
+
+setInterval(() => {
+  counterDiv.innerHTML = "🪳Busted: " + ++counterVal;
+}, 1000);
