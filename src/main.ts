@@ -22,11 +22,23 @@ button.addEventListener("click", () => {
 });
 app.append(counterDiv);
 
-let timestamp = performance.now();
-requestAnimationFrame(function step(t) {
-  counterVal += (t - timestamp) / 1000;
-  timestamp = t;
-  counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
-  requestAnimationFrame(step);
-});
+const upgradeButtonName = "Upgrade: Auto-Buster (10 bugs)";
+const upgradeButton = document.createElement("button");
+upgradeButton.innerHTML = upgradeButtonName;
+app.append(upgradeButton);
 
+document.addEventListener("input", () => {
+  upgradeButton.disabled = counterVal < 10;
+});
+upgradeButton.addEventListener("click", () => {
+  if (counterVal >= 10) {
+    counterVal -= 10;
+    let timestamp = performance.now();
+    requestAnimationFrame(function step(t) {
+      counterVal += (t - timestamp) / 1000;
+      timestamp = t;
+      counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
+      requestAnimationFrame(step);
+    });
+  }
+});
