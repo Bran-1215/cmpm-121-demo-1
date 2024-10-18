@@ -1,5 +1,17 @@
 import "./style.css";
 
+interface Item {
+  name: string;
+  cost: number;
+  rate: number;
+};
+
+const availableItems: Item[] = [
+  { name: "Bug Traps", cost: 10, rate: 0.1 },
+  { name: "Bug Spray", cost: 100, rate: 2 },
+  { name: "Exterminator", cost: 1000, rate: 50 },
+];
+
 const app: HTMLDivElement = document.querySelector("#app")!;
 
 const gameName = "bug buster";
@@ -22,101 +34,51 @@ button.addEventListener("click", () => {
 });
 app.append(counterDiv);
 
-// Status Display
+// Refactored Code
 let rate = 0;
-let itemACounter = 0;
-let itemBCounter = 0;
-let itemCCounter = 0;
+const itemCounters = availableItems.map(() => 0);
 const statusDisplay = document.createElement("div");
-statusDisplay.innerHTML = `Busting Rate: ${rate} bugs/second, Bug Traps: ${itemACounter}, Bug Spray: ${itemBCounter}, Exterminator: ${itemCCounter}`;
-document.addEventListener("click", () => {
-  statusDisplay.innerHTML = `Busting Rate: ${Math.round(rate * 10) / 10} bugs/second, Bug Traps: ${itemACounter}, Bug Spray: ${itemBCounter}, Exterminator: ${itemCCounter}`;
-});
+
+const updateStatusDisplay = () => {
+  const itemStatus = availableItems.map((item, index) => `${item.name}: ${itemCounters[index]}`).join(", ");
+  statusDisplay.innerHTML = `Busting Rate: ${Math.round(rate * 10) / 10} bugs/second, ${itemStatus}`;
+};
 app.append(statusDisplay);
 
-// Upgrade Button A
-let upgradeACost = 10;
-const upgradeButtonA = document.createElement("button");
-upgradeButtonA.innerHTML = `Bug Traps (${upgradeACost} bugs)`;
-document.addEventListener("click", () => {
-  upgradeButtonA.innerHTML = `Bug Traps (${upgradeACost} bugs)`;
-});
-app.append(upgradeButtonA);
+const createUpgradeButton = (item: Item, index: number) => {
+  let itemCost = item.cost;
 
-document.addEventListener("input", () => {
-  upgradeButtonA.disabled = counterVal < upgradeACost;
-});
+  const upgradeButton = document.createElement("button");
+  upgradeButton.innerHTML = `${item.name} (${itemCost} bugs)`;
+  app.append(upgradeButton);
 
-upgradeButtonA.addEventListener("click", () => {
-  if (counterVal >= upgradeACost) {
-    rate += 0.1;
-    itemACounter += 1;
-    counterVal -= upgradeACost;
-    upgradeACost = Math.round(upgradeACost * 1.15 * 100) / 100;
-    let timestampA = performance.now();
-    requestAnimationFrame(function step(tA) {
-      counterVal += ((tA - timestampA) / 1000) * 0.1;
-      timestampA = tA;
-      counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
-      requestAnimationFrame(step);
-    });
-  }
-});
+  document.addEventListener("click", () => {
+    upgradeButton.innerHTML = `${item.name} (${itemCost} bugs)`;
+  });
 
-// Upgrade Button B
-let upgradeBCost = 100;
-const upgradeButtonB = document.createElement("button");
-upgradeButtonB.innerHTML = `Bug Spray (${upgradeBCost} bugs)`;
-document.addEventListener("click", () => {
-  upgradeButtonB.innerHTML = `Bug Spray (${upgradeBCost} bugs)`;
-});
-app.append(upgradeButtonB);
+  document.addEventListener("input", () => {
+    upgradeButton.disabled = counterVal < itemCost;
+  });
 
-document.addEventListener("input", () => {
-  upgradeButtonB.disabled = counterVal < upgradeBCost;
-});
+  upgradeButton.addEventListener("click", () => {
+    if (counterVal >= itemCost) {
+      rate += item.rate;
+      itemCounters[index] += 1;
+      counterVal -= itemCost;
+      itemCost = Math.round(itemCost * 1.15 * 100) / 100;
+      let timestamp = performance.now();
+      requestAnimationFrame(function step(t) {
+        counterVal += ((t - timestamp) / 1000) * item.rate;
+        timestamp = t;
+        counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
+        requestAnimationFrame(step);
+      });
+    }
+    updateStatusDisplay();  
+  });
+};
 
-upgradeButtonB.addEventListener("click", () => {
-  if (counterVal >= upgradeBCost) {
-    rate += 2;
-    itemBCounter += 1;
-    counterVal -= upgradeBCost;
-    upgradeBCost = Math.round(upgradeBCost * 1.15 * 100) / 100;
-    let timestampB = performance.now();
-    requestAnimationFrame(function step(tB) {
-      counterVal += ((tB - timestampB) / 1000) * 2;
-      timestampB = tB;
-      counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
-      requestAnimationFrame(step);
-    });
-  }
-});
-
-// Upgrade Button C
-let upgradeCCost = 1000;
-const upgradeButtonC = document.createElement("button");
-upgradeButtonC.innerHTML = `Exterminator (${upgradeCCost} bugs)`;
-document.addEventListener("click", () => {
-  upgradeButtonC.innerHTML = `Exterminator (${upgradeCCost} bugs)`;
-});
-app.append(upgradeButtonC);
-
-document.addEventListener("input", () => {
-  upgradeButtonC.disabled = counterVal < upgradeCCost;
-});
-
-upgradeButtonC.addEventListener("click", () => {
-  if (counterVal >= upgradeCCost) {
-    rate += 50;
-    itemCCounter += 1;
-    counterVal -= upgradeCCost;
-    upgradeCCost = Math.round(upgradeCCost * 1.15 * 100) / 100;
-    let timestampC = performance.now();
-    requestAnimationFrame(function step(tC) {
-      counterVal += ((tC - timestampC) / 1000) * 50;
-      timestampC = tC;
-      counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
-      requestAnimationFrame(step);
-    });
-  }
+// Creation of Buttons
+availableItems.forEach((item, index) => {
+  createUpgradeButton(item, index);
 });
