@@ -1,19 +1,14 @@
 import "./style.css";
+import upgradeItems from "./items.json";
 
 interface Item {
-  name: string;
-  description: string;
-  cost: number;
-  rate: number;
+  upgradeName: string;
+  upgradeDescription: string;
+  bugCost: number;
+  bustRate: number;
 }
 
-const availableItems: Item[] = [
-  { name: "Bug Traps", description: "Sticky traps to catch bugs", cost: 10, rate: 0.1 },
-  { name: "Bug Spray", description: "Aerosolized weaponry against bugs", cost: 100, rate: 2 },
-  { name: "Exterminator", description: "Just some guy whose better at busting bugs than you", cost: 1000, rate: 50 },
-  { name: "Fumigator", description: "Like bug spray but better, and more dangerous", cost: 10000, rate: 500 },
-  { name: "Bug Nuke", description: "Bug Nuke. Nuke for bugs. Bugs will be nuked.", cost: 100000, rate: 10000 },
-];
+const availableItems: Item[] = upgradeItems as Item[];
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
@@ -37,48 +32,55 @@ button.addEventListener("click", () => {
 });
 app.append(counterDiv);
 
-// Refactored Code
-let rate = 0;
+let bustRate = 0;
 const itemCounters = availableItems.map(() => 0);
 const statusDisplay = document.createElement("div");
 
 const updateStatusDisplay = () => {
   const itemStatus = availableItems
-    .map((item, index) => `${item.name}: ${itemCounters[index]}`)
+    .map((item, index) => `${item.upgradeName}: ${itemCounters[index]}`)
     .join(", ");
-  statusDisplay.innerHTML = `Busting Rate: ${Math.round(rate * 10) / 10} bugs/second, ${itemStatus}`;
+  statusDisplay.innerHTML = `Busting Rate: ${Math.round(bustRate * 10) / 10} bugs/second, ${itemStatus}`;
 };
 app.append(statusDisplay);
 
-const createUpgradeButton = (item: Item, index: number) => {
-  let itemCost = item.cost;
-
-  const upgradeButton = document.createElement("button");
-  upgradeButton.innerHTML = `${item.name} (${itemCost} bugs)`;
-  app.append(upgradeButton);
-
-  // Create a description element
-  const descriptionDiv = document.createElement("div");
-  descriptionDiv.innerHTML = item.description;
-  app.append(descriptionDiv);
-
+const addUpgradeButtonListeners = (
+  button: HTMLButtonElement,
+  itemCost: number,
+  index: number
+) => {
   document.addEventListener("click", () => {
-    upgradeButton.innerHTML = `${item.name} (${itemCost} bugs)`;
+    button.innerHTML = `${availableItems[index].upgradeName} (${itemCost} bugs)`;
   });
 
   document.addEventListener("input", () => {
-    upgradeButton.disabled = counterVal < itemCost;
+    button.disabled = counterVal < itemCost;
   });
+};
+
+const createUpgradeButton = (item: Item, index: number) => {
+  let itemCost = item.bugCost;
+
+  const upgradeButton = document.createElement("button");
+  upgradeButton.innerHTML = `${item.upgradeName} (${itemCost} bugs)`;
+  app.append(upgradeButton);
+
+  const upgradeDescriptionDiv = document.createElement("div");
+  upgradeDescriptionDiv.innerHTML = item.upgradeDescription;
+  app.append(upgradeDescriptionDiv);
+
+  addUpgradeButtonListeners(upgradeButton, itemCost, index);
 
   upgradeButton.addEventListener("click", () => {
     if (counterVal >= itemCost) {
-      rate += item.rate;
+      bustRate += item.bustRate;
       itemCounters[index] += 1;
       counterVal -= itemCost;
       itemCost = Math.round(itemCost * 1.15 * 100) / 100;
+
       let timestamp = performance.now();
       requestAnimationFrame(function step(t) {
-        counterVal += ((t - timestamp) / 1000) * item.rate;
+        counterVal += ((t - timestamp) / 1000) * item.bustRate;
         timestamp = t;
         counterDiv.innerHTML = "🪳Busted: " + Math.floor(counterVal);
         requestAnimationFrame(step);
@@ -88,7 +90,6 @@ const createUpgradeButton = (item: Item, index: number) => {
   });
 };
 
-// Creation of Buttons
 availableItems.forEach((item, index) => {
   createUpgradeButton(item, index);
 });
