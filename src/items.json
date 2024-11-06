@@ -1,7 +1,32 @@
 [
-    { "upgradeName": "Bug Traps", "upgradeDescription": "Sticky traps to catch bugs", "bugCost": 10, "bustRate": 0.1 },
-    { "upgradeName": "Bug Spray", "upgradeDescription": "Aerosolized weaponry against bugs", "bugCost": 100, "bustRate": 2 },
-    { "upgradeName": "Exterminator", "upgradeDescription": "Just some guy whose better at busting bugs than you", "bugCost": 1000, "bustRate": 50 },
-    { "upgradeName": "Fumigator", "upgradeDescription": "Like bug spray but better, and more dangerous", "bugCost": 10000, "bustRate": 500 },
-    { "upgradeName": "Bug Nuke", "upgradeDescription": "Bug Nuke. Nuke for bugs. Bugs will be nuked.", "bugCost": 100000, "bustRate": 10000 }
-  ]
+  {
+    "upgradeName": "Bug Traps",
+    "upgradeDescription": "Sticky traps to catch bugs",
+    "bugCost": 10,
+    "bustRate": 0.1
+  },
+  {
+    "upgradeName": "Bug Spray",
+    "upgradeDescription": "Aerosolized weaponry against bugs",
+    "bugCost": 100,
+    "bustRate": 2
+  },
+  {
+    "upgradeName": "Exterminator",
+    "upgradeDescription": "Just some guy whose better at busting bugs than you",
+    "bugCost": 1000,
+    "bustRate": 50
+  },
+  {
+    "upgradeName": "Fumigator",
+    "upgradeDescription": "Like bug spray but better, and more dangerous",
+    "bugCost": 10000,
+    "bustRate": 500
+  },
+  {
+    "upgradeName": "Bug Nuke",
+    "upgradeDescription": "Bug Nuke. Nuke for bugs. Bugs will be nuked.",
+    "bugCost": 100000,
+    "bustRate": 10000
+  }
+]

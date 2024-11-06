@@ -47,7 +47,7 @@ app.append(statusDisplay);
 const addUpgradeButtonListeners = (
   button: HTMLButtonElement,
   itemCost: number,
-  index: number
+  index: number,
 ) => {
   document.addEventListener("click", () => {
     button.innerHTML = `${availableItems[index].upgradeName} (${itemCost} bugs)`;
